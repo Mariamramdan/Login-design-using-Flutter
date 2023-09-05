@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
+  final _formKey = GlobalKey<FormState>();
 
+  TextEditingController controller1 = TextEditingController();
+  TextEditingController controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +23,7 @@ class HomeScreen extends StatelessWidget {
             ),
             Container(
               width: 300,
-              height: 500,
+              height: 600,
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(color: Colors.grey.shade50),
@@ -48,33 +51,73 @@ class HomeScreen extends StatelessWidget {
                       color: Colors.black87,
                     ),),
                   ),
-                  SizedBox(
-                      width: 290,
-                      child:
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'البريد اللالكتروني',
-                          hintStyle: TextStyle(color: Colors.orangeAccent),
-                          prefixIcon: Icon(Icons.email),
-                          hintTextDirection: TextDirection.rtl,
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          width: 290,
+                          child:
+                          TextFormField(
+                              validator: (value) {
+                                if (value == null || value.isEmpty ||!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value))  {
+                                  return "ادخل البريد الالكتروني الصحيح";
+                                }
+                                return null;
+                              },
+                              decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  hintText: 'البريد اللالكتروني',
+                                  hintStyle: TextStyle(color: Colors.orangeAccent),
+                                  prefixIcon: Icon(Icons.email,color: Colors.grey,),
+                                  hintTextDirection: TextDirection.rtl,
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 2.5,
+                                    ),
+                                  )
+                              ),
+                              controller: controller,
+                              onFieldSubmitted: (value) {
+                                controller1.clear();
+                              },
+                            ),
                         ),
-                      ),
-                    ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  const SizedBox(
-                    width: 290,
-                    child:
-                    TextField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: "كلمة المرور",
-                        hintStyle: TextStyle(color: Colors.orangeAccent),
-                        hintTextDirection: TextDirection.rtl,
-                        prefixIcon: Icon(Icons.lock),
-                      ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        SizedBox(
+                          width: 290,
+                          child:
+                          TextFormField(
+                              validator: (value) {
+                                if (value == null || value.isEmpty || !RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$').hasMatch(value)) {
+                                  return 'ادخل كلمة المرور الصحيحة';
+                                }
+                                return null;
+                              },
+                              decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  hintText: "كلمة المرور",
+                                  hintStyle: TextStyle(color: Colors.orangeAccent),
+                                  hintTextDirection: TextDirection.rtl,
+                                  prefixIcon: Icon(Icons.lock,color: Colors.grey,),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 2.5,
+                                    ),
+                                  )
+                              ),
+                              controller: controller1,
+                              onFieldSubmitted: (value) {
+                                controller1.clear();
+                              },
+
+                            ),
+                        ),
+                      ],
                     ),
                   ),
                   Padding(
@@ -96,6 +139,11 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ),
                           onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('\tتم تسجيل الدخول بنجاح\t')),
+                              );
+                            }
                           },
                           child: const Text("تسجيل الدخول"),
 
